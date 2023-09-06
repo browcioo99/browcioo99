@@ -1,5 +1,6 @@
 - 👋 Hi, I’m Wiktoria!
 - I am young, ambitious person learning data analysis
+- Currently looking for job 🧐
 - I have been working as FP&A 🥸
 - In free time I love to play tennis and board games 🥳
 
