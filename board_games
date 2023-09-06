@@ -7,61 +7,84 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 #importing dataset
-bg = pd.read_excel(r'/Desktop/PythonScripts/data analysis/bgg/bgg_db.xlsx')
+bg = pd.read_excel(r'/Users/wiktoriabrowarska/Desktop/PythonScripts/data analysis/bgg/bgg_db.xlsx')
 
 #chart1
-#sorting values to show top 20 by geek rating
-top_20 = bg.sort_values('avg_rating',ascending = False).head(20).round(1)
 
-#creating bar chart
-rating = px.bar(top_20, x='avg_rating',y='names',title='Top 20 best ranked games by Board Game Geek', height = 600, color='year')
-rating.update_layout( # customize font and legend orientation & position
-    font_family="Rockwell",
-    xaxis_range=[8.5,10],
-    xaxis = dict(dtick=0.1),
-    title=dict(font=dict(size=20)),
-    legend=dict(
-        title=None, orientation="h", y=1, yanchor="bottom", x=0.5, xanchor="center"
+#sorting values to show top 20 by geek rating
+top_20 = bg.sort_values('avg_rating', ascending=False).head(20).round(1)
+
+# Convert the 'year' column to string to treat it as a category
+top_20['year'] = top_20['year'].astype(str)
+
+# Creating the bar chart
+rating = px.bar(
+    top_20,
+    x = 'avg_rating',
+    y = 'names',
+    title = 'Top 20 best-ranked games by Board Game Geek',
+    height = 600,
+    color = 'year',
+    category_orders = {'year': ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']},
+    color_discrete_map = {'year': 'blue'}  # Set a fixed color for the 'year' values
+)
+
+# Customizing the chart layout
+rating.update_layout(
+    font_family = "Rockwell",
+    xaxis_range = [8.5, 9.5],
+    xaxis = dict(dtick = 0.1),
+    yaxis = dict(dtick = 1),
+    title = dict(font = dict(size = 20)),
+    legend = dict(
+        title = None,
+        orientation = "h",
+        y = 1,
+        yanchor = "bottom",
+        x = 0.5,
+        xanchor = "center"
     )
 )
 rating.show()
 
 #chart2
+
 #grouping data to show how much games were made by year
-rank_count_bg = bg.groupby('year').size().reset_index(name='number of board games')
+rank_count_bg = bg.groupby('year').size().reset_index(name = 'number of board games')
+
 #creating chart
-amount_by_year = px.line(rank_count_bg, x='year', y='number of board games',title = 'Number of board games made each year')
+amount_by_year = px.line(rank_count_bg, x = 'year', y = 'number of board games',title = 'Number of board games made each year')
 amount_by_year.update_layout(
-    xaxis_range=[2010,2019],
-    xaxis = dict(dtick=1),
-    font_family="Courier New",
-    font_color="seagreen",
-    title_font_family="Courier New",
-    title_font_color="green",
-    title=dict(font=dict(size=20))
+    xaxis_range = [2010,2019],
+    xaxis = dict(dtick = 1),
+    font_family = "Courier New",
+    font_color = "seagreen",
+    title_font_family = "Courier New",
+    title_font_color = "green",
+    title = dict(font = dict(size = 20))
 )
-amount_by_year.update_traces(line_color='purple',line={'width': 5})
+amount_by_year.update_traces(line_color = 'purple',line = {'width': 5})
 amount_by_year.show()
 
-
 #chart3
+
 #combining all categories columns
 combined_categories = pd.concat([bg[col] for col in bg.columns if 'category' in col])
 category_counts = combined_categories.value_counts().reset_index()
 category_counts.columns = ['category','count']
-category_counts= category_counts.sort_values(by='count',ascending=False)
+category_counts = category_counts.sort_values(by = 'count',ascending = False)
 
 #creating chart
 category = go.Figure(go.Bar(
-      x=category_counts['category'],
-      y=category_counts['count']
+      x = category_counts['category'],
+      y = category_counts['count']
 ))
 category.update_layout(
-    title='How much games of each category were made',
-    xaxis=dict(title='category'),
-    yaxis=dict(title='count'),
-    font_family="Helvetica",
-    font_color="magenta"
+    title = 'How much games of each category were made',
+    xaxis = dict(title = 'category'),
+    yaxis = dict(title = 'count'),
+    font_family = "Helvetica",
+    font_color = "blue"
 )
 
 category.show()
