@@ -1,0 +1,96 @@
+Welcome! This is a code for my interactive chart of world's population! 🌎
+https://www.kaggle.com/datasets/iamsouravbanerjee/world-population-dataset - dataset 
+
+from dash import Dash, html, dcc, Input, Output
+import plotly.express as px
+import pandas as pd
+
+pop = pd.read_excel(r'/Desktop/PythonScripts/data analysis/population/world_population.xlsx')
+
+app = Dash(__name__)
+
+app.layout = html.Div([
+    html.H4('Analysis of world population'),
+    dcc.Graph(id='graph'),
+    html.P("Continent:"),
+    dcc.Dropdown(
+        id='Continent',
+        options=[
+            {'label': 'Africa', 'value': 'Africa'},
+            {'label': 'Asia', 'value': 'Asia'},
+            {'label': 'Europe', 'value': 'Europe'},
+            {'label': 'North America', 'value': 'North America'},
+            {'label': 'Oceania', 'value': 'Oceania'},
+            {'label': 'South America', 'value': 'South America'}
+        ],
+        value='Europe',
+        clearable=False
+    ),
+    html.P('Year:'),
+    dcc.Dropdown(
+        id='Year',
+        options=[
+            {'label': '2022', 'value': '2022'},
+            {'label': '2020', 'value': '2020'},
+            {'label': '2015', 'value': '2015'},
+            {'label': '2010', 'value': '2010'},
+            {'label': '2000', 'value': '2000'},
+            {'label': '1990', 'value': '1990'}
+        ],
+        value='2022',
+        clearable=False
+    ),
+    html.P('Population Type:'),
+    dcc.Dropdown(
+        id='Population-Type',
+        options=[
+            {'label': 'Largest', 'value': 'largest'},
+            {'label': 'Smallest', 'value': 'smallest'}
+        ],
+        value='largest',
+        clearable=False
+    ),
+], style={
+    'background-color': '#e8e7e1',  # Set the background color
+    'padding': '20px',  # Add padding for better readability
+})
+
+#calling the app with three dropdowns
+@app.callback(
+    Output('graph', 'figure'),
+    Input('Continent', 'value'),
+    Input('Year', 'value'),
+    Input('Population-Type', 'value'),  
+)
+def generate_chart(continent, year, population_type):  # population_type parameter
+    filtered_pop = pop[(pop['Continent'] == continent)]
+    
+    # Map years to column names
+    year_column_map = {
+        '2022': 2022,
+        '2020': 2020,
+        '2015': 2015,
+        '2010': 2010,
+        '2000': 2000,
+        '1990': 1990,
+    }
+    
+    # Select the appropriate column name for population based on the selected year
+    population_column_name = year_column_map[year]
+    
+    # Sort the data to get top or bottom populations
+    if population_type == 'largest':
+        filtered_pop = filtered_pop.nlargest(10, population_column_name)
+    elif population_type == 'smallest':
+        filtered_pop = filtered_pop.nsmallest(10, population_column_name)
+    
+    # Prepare the data for the pie chart
+    filtered_pop['Others'] = pop[population_column_name].sum() - filtered_pop[population_column_name].sum()
+    pie_data = filtered_pop.set_index('Country/Territory').loc[:, [population_column_name, 'Others']]
+    
+    fig = px.pie(pie_data, names=pie_data.index, values=population_column_name, title=f'Top 10 Countries with {population_type.capitalize()} Population in {year} - {continent}')
+    return fig
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
