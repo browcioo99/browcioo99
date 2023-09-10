@@ -10,7 +10,7 @@ pop = pd.read_excel(r'/Desktop/PythonScripts/data analysis/population/world_popu
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.H4('Analysis of world population'),
+    html.H4('Analysis of world population'), style={'font-family': 'Mulish', 'color': '#FF335C'})
     dcc.Graph(id='graph'),
     html.P("Continent:"),
     dcc.Dropdown(
