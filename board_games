@@ -76,15 +76,27 @@ category_counts = category_counts.sort_values(by = 'count',ascending = False)
 
 #creating chart
 category = go.Figure(go.Bar(
-      x = category_counts['category'],
-      y = category_counts['count']
+    x=category_counts['category'],
+    y=category_counts['count']
 ))
+
 category.update_layout(
-    title = 'How much games of each category were made',
-    xaxis = dict(title = 'category'),
-    yaxis = dict(title = 'count'),
-    font_family = "Helvetica",
-    font_color = "blue"
+    title='How many games of each category were made',
+    xaxis=dict(
+        title='Category',
+        tickangle=-45,
+        tickfont=dict(size=10),
+        tickmode='array',  # Use custom tick values
+        tickvals=list(category_counts['category']),  # Specify the tick values
+    ),
+    yaxis=dict(title='Count'),
+    font_family="Helvetica",
+    font_color="blue",
+    width=1500,  # Increase width for better visibility
+    height=500,
+    bargap=0.2,
+    bargroupgap=0.1
 )
+
 
 category.show()
