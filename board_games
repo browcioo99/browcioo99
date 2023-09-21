@@ -68,35 +68,38 @@ amount_by_year.show()
 
 #chart3
 
-#combining all categories columns
+# Combine all columns containing 'category'
 combined_categories = pd.concat([bg[col] for col in bg.columns if 'category' in col])
-category_counts = combined_categories.value_counts().reset_index()
-category_counts.columns = ['category','count']
-category_counts = category_counts.sort_values(by = 'count',ascending = False)
 
-#creating chart
+# Count the occurrences of each category
+category_counts = combined_categories.value_counts().reset_index()
+category_counts.columns = ['category', 'count']
+
+# Filter categories with counts greater than 200
+filtered_categories_count = category_counts[category_counts['count'] > 200]
+
+# Create the bar chart using the filtered data
 category = go.Figure(go.Bar(
-    x=category_counts['category'],
-    y=category_counts['count']
+    x=filtered_categories_count['category'],
+    y=filtered_categories_count['count']
 ))
 
 category.update_layout(
-    title='How many games of each category were made',
+    title='How many games of each category were made (Categories with more than 200 counts)',
     xaxis=dict(
         title='Category',
         tickangle=-45,
-        tickfont=dict(size=10),
+        tickfont=dict(size=14),
         tickmode='array',  # Use custom tick values
-        tickvals=list(category_counts['category']),  # Specify the tick values
+        tickvals=list(filtered_categories_count['category']),  # Specify the tick values
     ),
     yaxis=dict(title='Count'),
     font_family="Helvetica",
     font_color="blue",
-    width=1500,  # Increase width for better visibility
+    width=1000,  # Increase width for better visibility
     height=500,
-    bargap=0.2,
+    bargap=0.1,
     bargroupgap=0.1
 )
-
 
 category.show()
