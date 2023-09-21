@@ -55,7 +55,7 @@ rank_count_bg = bg.groupby('year').size().reset_index(name = 'number of board ga
 #creating chart
 amount_by_year = px.line(rank_count_bg, x = 'year', y = 'number of board games',title = 'Number of board games made each year')
 amount_by_year.update_layout(
-    xaxis_range = [2010,2019],
+    xaxis_range = [2000,2017],
     xaxis = dict(dtick = 1),
     font_family = "Courier New",
     font_color = "seagreen",
